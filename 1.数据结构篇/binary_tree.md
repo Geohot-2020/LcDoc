@@ -358,3 +358,220 @@ function swap(nums, i, j) {
 }
 ```
 
+#### 题目示例
+
+##### 最大深度
+
+[maximum-depth-of-binary-tree](https://leetcode-cn.com/problems/maximum-depth-of-binary-tree/)
+
+```js
+var maxDepth = function(root) {
+    if (root === null)  return 0;
+    let left = maxDepth(root.left);
+    let right = maxDepth(root.right);
+    return left>right ? left + 1: right+1;
+};
+```
+
+##### 平衡二叉树
+
+[balanced-binary-tree](https://leetcode-cn.com/problems/balanced-binary-tree/)
+
+```js
+var isBalanced = function(root) {
+    return recur(root) != -1;
+};
+
+var recur = function(root) {
+    if (root === null)   return 0;
+    let left = recur(root.left);
+    if (left === -1)    return -1;
+    let right = recur(root.right);
+    if (right === -1)   return -1;
+    return Math.abs(left - right) < 2 ? Math.max(left, right) + 1: -1;
+}
+```
+
+##### 二叉树最大路径和[hard]
+
+##### 二叉树最近公共祖先
+
+[lowest-common-ancestor-of-a-binary-tree](https://leetcode-cn.com/problems/lowest-common-ancestor-of-a-binary-tree/)
+
+```js
+var lowestCommonAncestor = function(root, p, q) {
+    if (root === null)  return root;
+    if (root === p || root === q)
+        return root;
+    let left = lowestCommonAncestor(root.left, p, q);
+    let right = lowestCommonAncestor(root.right, p, q);
+
+    if (left && right)  return root;
+    if (left)   return left;
+    if (right)  return right;
+};
+```
+
+#### BFS应用
+
+##### 层次遍历
+
+```js
+var levelOrder = function(root) {
+    let res = [];
+    if (root === null)  return res;
+
+    let queue = [];
+    queue.push(root);
+
+    while (queue.length > 0) {
+        let levelList = [];
+        let levelSize = queue.length;
+        for (let i = 0; i < levelSize; i++) {
+            //出队
+            let node = queue.shift();
+            levelList.push(node.val);
+            //有左进左
+            if (node.left !== null)
+                queue.push(node.left);
+            //有右进右
+            if (node.right !== null)
+                queue.push(node.right);
+        }
+
+        res.push(levelList);
+    }
+    return res;
+};
+```
+
+##### 反层次遍历
+
+[binary-tree-level-order-traversal-ii](https://leetcode-cn.com/problems/binary-tree-level-order-traversal-ii/)
+
+```js
+var levelOrderBottom = function(root) {
+    let res = [];
+    if (root === null)  return res;
+
+    let queue = [];
+    queue.push(root);
+
+    while (queue.length > 0) {
+        let levelList = [];
+        let levelSize = queue.length;
+        for (let i = 0; i < levelSize; i++) {
+            //出队
+            let node = queue.shift();
+            levelList.push(node.val);
+            //有左进左
+            if (node.left !== null)
+                queue.push(node.left);
+            //有右进右
+            if (node.right !== null)
+                queue.push(node.right);
+        }
+		// 反
+        res.unshift(levelList);
+    }
+    return res;
+};
+```
+
+##### Z字型遍历
+
+[binary-tree-zigzag-level-order-traversal](https://leetcode-cn.com/problems/binary-tree-zigzag-level-order-traversal/)
+
+```js
+var zigzagLevelOrder = function(root) {
+    let res = [];
+    if (root === null)  return res;
+
+    let queue = [];
+    queue.push(root);
+
+    let toggle = true;
+
+    while (queue.length > 0) {
+        let levelList = [];
+        let levelSize = queue.length;
+        for (let i = 0; i < levelSize; i++) {
+            //出队
+            let node = queue.shift();
+            levelList.push(node.val);
+            //有左进左
+            if (node.left !== null)
+                queue.push(node.left);
+            //有右进右
+            if (node.right !== null)
+                queue.push(node.right);
+        }
+		// 反
+        if (!toggle) 
+            levelList.reverse();
+        res.push(levelList);
+        toggle = !toggle;
+    }
+    return res;
+};
+```
+
+#### 二叉搜索树
+
+##### 验证二叉搜索树
+
+[validate-binary-search-tree](https://leetcode-cn.com/problems/validate-binary-search-tree/)
+
+```js
+var isValidBST = function(root) {
+    return inOrder(root, null, null);
+};
+
+var inOrder = function(root, min, max) {
+    if (root === null)
+        return true;
+    // 当前节点值不满足 BST 条件
+    if((min !== null && root.val <= min) || (max != null && root.val >= max))
+        return false;
+    // 左子树：最大值约束为当前节点值
+    // 右子树：最小值约束为当前节点值
+    return (
+        inOrder(root.left, min, root.val) &&
+        inOrder(root.right, root.val, max)
+    );
+}
+```
+
+##### 二叉搜索树插入
+
+[insert-into-a-binary-search-tree](https://leetcode-cn.com/problems/insert-into-a-binary-search-tree/)
+
+```
+var insertIntoBST = function(root, val) {
+    if (root === null) {
+        let node = new TreeNode(val);
+        return node;
+    }
+    if (val < root.val)
+        root.left = insertIntoBST(root.left, val);
+    else if (val > root.val)
+        root.right = insertIntoBST(root.right, val);
+    return root;
+};
+```
+
+### 练习
+
+- [ ] [maximum-depth-of-binary-tree](https://leetcode.cn/problems/maximum-depth-of-binary-tree/description/)
+- [ ] [balanced-binary-tree](https://leetcode-cn.com/problems/balanced-binary-tree/)
+- [ ] [binary-tree-maximum-path-sum](https://leetcode-cn.com/problems/binary-tree-maximum-path-sum/)
+- [ ] [lowest-common-ancestor-of-a-binary-tree](https://leetcode.cn/problems/lowest-common-ancestor-of-a-binary-tree/description/)
+- [ ] [binary-tree-level-order-traversal](https://leetcode-cn.com/problems/binary-tree-level-order-traversal/)
+
+- [ ] [binary-tree-level-order-traversal-ii](https://leetcode-cn.com/problems/binary-tree-level-order-traversal-ii/)
+
+- [ ] [binary-tree-zigzag-level-order-traversal](https://leetcode.cn/problems/binary-tree-zigzag-level-order-traversal/description/)
+
+- [ ] [validate-binary-search-tree](https://leetcode-cn.com/problems/validate-binary-search-tree/)
+
+- [ ] [insert-into-a-binary-search-tree](https://leetcode-cn.com/problems/insert-into-a-binary-search-tree/)
