@@ -19,13 +19,12 @@
 
 ```js
 var deleteDuplicates = function(head) {
-    let current = head;
-    while (current !== null) {
-        // 移除所有与当前节点值相同的后续节点
-        while (current.next !== null && current.val === current.next.val) {
-            current.next = current.next.next; // 跳过重复节点
-        }
-        current = current.next; // 移动到下一个节点
+    let cur = head;
+    while (cur !== null ) {
+        // 移除与当前节点值相同
+        while (cur.next !== null && cur.val === cur.next.val)
+            cur.next = cur.next.next;   //跳过重复节点
+        cur = cur.next;
     }
     return head;
 };
@@ -37,28 +36,22 @@ var deleteDuplicates = function(head) {
 
 ```js
 var deleteDuplicates = function(head) {
-    if (head === null) {
-        return head;
-    }
+    if (head === null)  return head;
 
-    // 创建虚拟头节点
+    // 虚拟头节点
     let dummy = new ListNode(0);
     dummy.next = head;
-    let current = dummy;
+    let cur = dummy;
 
-    while (current.next !== null && current.next.next !== null) {
-        if (current.next.val === current.next.next.val) {
-            // 记录重复值
-            let rmVal = current.next.val;
-            // 删除所有重复节点
-            while (current.next !== null && current.next.val === rmVal) {
-                current.next = current.next.next;
-            }
+    while (cur.next !== null && cur.next.next !== null) {
+        if (cur.next.val === cur.next.next.val) {
+            let rmVal = cur.next.val;   //重复节点值
+            while (cur.next !== null && cur.next.val === rmVal)
+                cur.next = cur.next.next;   //跳过cur.next
         } else {
-            current = current.next; // 移动到下一个节点
+            cur = cur.next;
         }
     }
-
     return dummy.next;
 };
 ```
@@ -77,20 +70,15 @@ var deleteDuplicates = function(head) {
 
 ```js
 var reverseList = function(head) {
-    let prev = null;
-
-    while (head !== null) {
-        // 保存当前 head.next 节点，防止覆盖
-        let temp = head.next;
-        // 反转当前节点指针
-        head.next = prev;
-        // 移动 prev 和 head 指针
-        prev = head;
-        head = temp;
+    if (head === null || head.next === null)    return head;
+    let cur = head, pre = null;
+    while (cur !== null) {
+        let nxt = cur.next;
+        cur.next = pre;
+        pre = cur;
+        cur = nxt;
     }
-
-    // prev 最终指向反转后的链表头节点
-    return prev;
+    return pre;
 };
 ```
 
@@ -99,36 +87,32 @@ var reverseList = function(head) {
 思路：先遍历到 m 处，翻转，再拼接后续，注意指针处理
 
 ```js
-var reverseBetween = function(head, m, n) {
-    if (head === null) {
-        return head;
-    }
+var reverseBetween = function(head, left, right) {
+    if (head === null)  return head;
 
-    // 创建 dummy 节点
     let dummy = new ListNode(0);
     dummy.next = head;
+    
     let pre = dummy;
 
-    // 遍历到第 m 个节点前
-    for (let i = 1; i < m; i++) {
+    for (let i = 1; i < left; i++) {
         pre = pre.next;
     }
+    // 开始反转
+    let cur = pre.next;
+    let ppre = null;
+    let mid = cur;
 
-    // 开始翻转
-    let current = pre.next;
-    let next = null;
-    let mid = current;
-
-    for (let i = m; i <= n; i++) {
-        let temp = current.next;
-        current.next = next;
-        next = current;
-        current = temp;
+    for (let i = left; i <= right; i++) {
+        let nxt = cur.next;
+        cur.next = ppre;
+        ppre = cur;
+        cur = nxt;
     }
 
-    // 拼接翻转的部分与剩余部分
-    pre.next = next;
-    mid.next = current;
+    // 拼接剩余
+    pre.next = ppre;
+    mid.next = cur;
 
     return dummy.next;
 };
@@ -139,35 +123,33 @@ var reverseBetween = function(head, m, n) {
 思路：通过 dummy node 链表，连接各个元素
 
 ```js
-var mergeTwoLists = function(l1, l2) {
-    // 创建 dummy 节点
+var mergeTwoLists = function(list1, list2) {
     let dummy = new ListNode(0);
     let head = dummy;
 
-    // 合并两个链表，按值大小排序
-    while (l1 !== null && l2 !== null) {
-        if (l1.val < l2.val) {
-            head.next = l1;
-            l1 = l1.next;
+    while (list1 !== null && list2 !== null) {
+        if (list1.val < list2.val) {
+            head.next = list1;
+            list1 = list1.next;
         } else {
-            head.next = l2;
-            l2 = l2.next;
+            head.next = list2;
+            list2 = list2.next;
         }
         head = head.next;
     }
 
-    // 如果 l1 未合并完
-    while (l1 !== null) {
-        head.next = l1;
+    // 1未完成
+    while (list1 !== null) {
+        head.next = list1;
+        list1 = list1.next;
         head = head.next;
-        l1 = l1.next;
     }
 
-    // 如果 l2 未合并完
-    while (l2 !== null) {
-        head.next = l2;
+    // 2未完成
+    while (list2 !== null) {
+        head.next = list2;
+        list2 = list2.next;
         head = head.next;
-        l2 = l2.next;
     }
 
     return dummy.next;
@@ -180,35 +162,30 @@ var mergeTwoLists = function(l1, l2) {
 
 ```js
 var partition = function(head, x) {
-    if (head === null) return head;
+    if (head === null)  return head;
 
-    // 初始化两个链表的哑节点
     let headDummy = new ListNode(0);
     let tailDummy = new ListNode(0);
 
-    // 分别指向小于 x 和大于等于 x 的链表的尾部
-    let headPointer = headDummy;
-    let tailPointer = tailDummy;
+    let headCur = headDummy;
+    let tailCur = tailDummy;
 
-    // 遍历链表
     while (head !== null) {
         if (head.val < x) {
-            // 当前值小于 x，加入 headDummy 链表
-            headPointer.next = head;
-            headPointer = headPointer.next;
+            headCur.next = head;
+            headCur = headCur.next;
         } else {
-            // 当前值大于等于 x，加入 tailDummy 链表
-            tailPointer.next = head;
-            tailPointer = tailPointer.next;
+            tailCur.next = head;
+            tailCur = tailCur.next;
         }
         head = head.next;
     }
 
-    // 防止形成环，将 tailDummy 链表的尾部指向 null
-    tailPointer.next = null;
+    // 尾指向空
+    tailCur.next = null;
 
-    // 拼接两个链表
-    headPointer.next = tailDummy.next;
+    // 拼接
+    headCur.next = tailDummy.next;
 
     return headDummy.next;
 };
@@ -227,60 +204,57 @@ var sortList = function(head) {
     return mergeSort(head);
 };
 
-// 找到链表的中间节点
-const findMiddle = function(head) {
+// 找中间
+var findMiddle = function(head) {
     let slow = head;
-    let fast = head.next; // fast 比 slow 快一步
+    let fast = slow.next;   //fast比slow快一步
 
     while (fast !== null && fast.next !== null) {
         slow = slow.next;
         fast = fast.next.next;
     }
-
+    
     return slow;
 };
 
 // 合并两个有序链表
-const mergeTwoLists = function(l1, l2) {
+var mergeTwoLists = function(l1, l2) {
     let dummy = new ListNode(0);
-    let current = dummy;
-
+    let cur = dummy;
     while (l1 !== null && l2 !== null) {
         if (l1.val < l2.val) {
-            current.next = l1;
+            cur.next = l1;
             l1 = l1.next;
         } else {
-            current.next = l2;
+            cur.next = l2;
             l2 = l2.next;
         }
-        current = current.next;
+        cur = cur.next;
     }
 
-    // 连接剩余的节点
-    current.next = l1 !== null ? l1 : l2;
+    // 剩余
+    cur.next = l1 !== null ? l1 : l2;
 
     return dummy.next;
-};
+}
 
 // 归并排序
-const mergeSort = function(head) {
-    // 如果只有一个节点或链表为空，直接返回
-    if (head === null || head.next === null) {
+var mergeSort = function(head) {
+    if (head === null || head.next === null)
         return head;
-    }
-
-    // 找到中间节点并分割链表
-    let middle = findMiddle(head);
-    let nextToMiddle = middle.next;
-    middle.next = null; // 断开链表
-
-    // 递归地对左右部分排序
+    
+    // 找到中间分割
+    let mid = findMiddle(head);
+    let midNxt = mid.next;
+    mid.next = null;    //断开
+    
+    // 递归排序左右
     let left = mergeSort(head);
-    let right = mergeSort(nextToMiddle);
+    let right = mergeSort(midNxt);
 
-    // 合并已排序的两部分
+    // 合并
     return mergeTwoLists(left, right);
-};
+}
 ```
 
 ##### [重排链表](https://leetcode.cn/problems/reorder-list/)
@@ -358,22 +332,16 @@ const reverseList = function(head) {
 
 ```js
 var hasCycle = function(head) {
-    // 使用快慢指针法检测环
-    if (head === null) return false;
+    if (head === null)  return false;
 
     let slow = head;
-    let fast = head.next;
-
+    let fast = head;
     while (fast !== null && fast.next !== null) {
-        // 如果快慢指针相遇，说明链表有环
-        if (fast === slow) {
-            return true;
-        }
-        fast = fast.next.next; // 快指针每次移动两步
-        slow = slow.next;      // 慢指针每次移动一步
+        slow = slow.next;
+        fast = fast.next.next;
+        // 快慢相遇，有环
+        if (slow === fast)  return true;
     }
-
-    // 遍历结束且没有相遇，说明链表无环
     return false;
 };
 ```
@@ -384,36 +352,23 @@ var hasCycle = function(head) {
 
 ```js
 var detectCycle = function(head) {
-    // 检查输入链表是否为空
-    if (head === null) {
-        return null;
-    }
-
-    let slow = head;
-    let fast = head;
-
-    // 使用快慢指针检测环
-    while (fast !== null && fast.next !== null) {
-        fast = fast.next.next; // 快指针每次移动两步
-        slow = slow.next;      // 慢指针每次移动一步
-
-        // 如果快慢指针相遇，说明链表有环
-        if (fast === slow) {
-            // 重置慢指针到链表头部
+    if (head === null)  return null;
+    let slow = head, fast = head;
+    while (fast && fast.next) {
+        slow = slow.next;
+        fast = fast.next.next;
+        if (slow === fast) {
+            // 重置指针
             slow = head;
-
-            // 快慢指针同步移动，每次移动一步
+            // 同步移动
             while (slow !== fast) {
                 slow = slow.next;
                 fast = fast.next;
             }
-
             // 返回环的起点
             return slow;
         }
     }
-
-    // 如果没有环，返回 null
     return null;
 };
 ```
@@ -421,45 +376,40 @@ var detectCycle = function(head) {
 ##### [回文链表](https://leetcode.cn/problems/palindrome-linked-list/)
 
 ```js
-// 判断链表是否是回文链表的函数
-function isPalindrome(head) {
-    if (head === null) {
-        return true;
-    }
-    let slow = head;
-    let fast = head.next;
-    // 快慢指针同时移动，快指针每次移动两步，找到链表中点
-    while (fast!== null && fast.next!== null) {
-        fast = fast.next.next;
+var isPalindrome = function(head) {
+    if (head === null)  return true;
+    // 1.找中点 [slow], 带奇偶性质的：fast = head.next
+    let slow = head, fast = head.next;
+    while (fast && fast.next) {
         slow = slow.next;
+        fast = fast.next.next;
     }
 
+    // 2.反转并断开链表
     let tail = reverse(slow.next);
-    // 断开两个链表（这里模拟断开后半部分链表与前半部分的连接）
     slow.next = null;
-    while (head!== null && tail!== null) {
-        if (head.val!== tail.val) {
+
+    // 3.对比
+    while(head && tail) {
+        if (head.val !== tail.val)
             return false;
-        }
         head = head.next;
         tail = tail.next;
     }
-    return true;
-}
 
-// 反转链表的函数
-function reverse(head) {
-    if (head === null) {
-        return head;
+    return true;
+};
+
+var reverse = function(head) {
+    if (head === null)  return head;
+    let pre = null, cur = head;
+    while (cur) {
+        let nxt = cur.next;
+        cur.next = pre;
+        pre = cur;
+        cur = nxt;
     }
-    let prev = null;
-    while (head!== null) {
-        let temp = head.next;
-        head.next = prev;
-        prev = head;
-        head = temp;
-    }
-    return prev;
+    return pre;
 }
 ```
 
@@ -468,38 +418,25 @@ function reverse(head) {
 思路：1、hash 表存储指针，2、复制节点跟在原节点后面
 
 ```js
-function copyRandomList(head) {
-    if (head === null) {
-        return head;
-    }
-    // 复制节点，紧挨到到后面
-    // 1->2->3  ==>  1->1'->2->2'->3->3'
+var copyRandomList = function(head) {
+    if (head === null)  return head;
+
+    //1.第一次遍历, 生成一个有val属性的链表
     let cur = head;
-    while (cur!== null) {
-        const clone = new Node(cur.val, cur.next);
-        const temp = cur.next;
-        cur.next = clone;
-        cur = temp;
+    const map = new Map();
+    while (cur) {
+        map.set(cur, new Node(cur.val));
+        cur = cur.next;
     }
-    // 处理random指针
+
+    //2.第二次遍历，根据映射关系，指向对应节点或null
     cur = head;
-    while (cur!== null) {
-        if (cur.random!== null) {
-            cur.next.random = cur.random.next;
-        }
-        cur = cur.next.next;
+    while (cur) {
+        map.get(cur).next = map.get(cur.next) || null;
+        map.get(cur).random = map.get(cur.random) || null;
+        cur = cur.next;
     }
-    // 分离两个链表
-    cur = head;
-    const cloneHead = cur.next;
-    while (cur!== null && cur.next!== null) {
-        const temp = cur.next;
-        cur.next = cur.next.next;
-        cur = temp;
-    }
-    // 原始链表头：head 1->2->3
-    // 克隆的链表头：cloneHead 1'->2'->3'
-    return cloneHead;
-}
+    return map.get(head);
+};
 ```
 
