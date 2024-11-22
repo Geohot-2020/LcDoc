@@ -30,7 +30,7 @@ var deleteDuplicates = function(head) {
 };
 ```
 
-##### [删除排序链表中的重复元素 II](https://leetcode.cn/problems/remove-duplicates-from-sorted-list-ii/)
+### [删除排序链表中的重复元素 II](https://leetcode.cn/problems/remove-duplicates-from-sorted-list-ii/)
 
 思路：链表头结点可能被删除，所以用 dummy node 辅助删除
 
@@ -82,7 +82,7 @@ var reverseList = function(head) {
 };
 ```
 
-##### [反转链表 II](https://leetcode.cn/problems/reverse-linked-list-ii/)
+#### [反转链表 II](https://leetcode.cn/problems/reverse-linked-list-ii/)
 
 思路：先遍历到 m 处，翻转，再拼接后续，注意指针处理
 
@@ -257,7 +257,7 @@ var mergeSort = function(head) {
 }
 ```
 
-##### [重排链表](https://leetcode.cn/problems/reorder-list/)
+#### [重排链表](https://leetcode.cn/problems/reorder-list/)
 
 思路：找到中点断开，翻转后面部分，然后合并前后两个链表
 
@@ -346,7 +346,7 @@ var hasCycle = function(head) {
 };
 ```
 
-##### [环形链表 II](https://leetcode.cn/problems/linked-list-cycle-ii/)
+#### [环形链表 II](https://leetcode.cn/problems/linked-list-cycle-ii/)
 
 思路：快慢指针，快慢相遇之后，慢指针回到头，快慢指针步调一致一起移动，相遇点即为入环点 
 
@@ -378,31 +378,36 @@ var detectCycle = function(head) {
 ```js
 var isPalindrome = function(head) {
     if (head === null)  return true;
-    // 1.找中点 [slow], 带奇偶性质的：fast = head.next
-    let slow = head, fast = head.next;
-    while (fast && fast.next) {
-        slow = slow.next;
-        fast = fast.next.next;
-    }
+    let mid = findMiddle(head);
+    let midNxt = mid.next;
+    mid.next = null;
 
-    // 2.反转并断开链表
-    let tail = reverse(slow.next);
-    slow.next = null;
+    let tail = reverse(midNxt);
 
-    // 3.对比
-    while(head && tail) {
+    while (head && tail) {
         if (head.val !== tail.val)
             return false;
         head = head.next;
         tail = tail.next;
     }
-
     return true;
 };
 
+// 1.找中点
+var findMiddle = function(head) {
+    let slow = head;
+    let fast = head.next;
+    while (fast && fast.next) {
+        slow = slow.next;
+        fast = fast.next.next;
+    }
+    return slow;
+}
+
+// 2.翻转
 var reverse = function(head) {
-    if (head === null)  return head;
-    let pre = null, cur = head;
+    let pre = null;
+    let cur = head;
     while (cur) {
         let nxt = cur.next;
         cur.next = pre;
@@ -413,7 +418,7 @@ var reverse = function(head) {
 }
 ```
 
-##### [随机链表的复制](https://leetcode.cn/problems/copy-list-with-random-pointer/)
+### [随机链表的复制](https://leetcode.cn/problems/copy-list-with-random-pointer/)
 
 思路：1、hash 表存储指针，2、复制节点跟在原节点后面
 
